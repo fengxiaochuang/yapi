@@ -229,3 +229,7 @@ em {
     color: #2395f1;
   }
 }
+// 修改兼容 i> svg
+i.anticon > svg {
+  display: none !important;
+}

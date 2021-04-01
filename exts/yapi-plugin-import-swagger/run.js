@@ -1,6 +1,7 @@
 const _ = require('underscore')
 const swagger = require('swagger-client');
 const compareVersions = require('compare-versions');
+const Converter = require('api-spec-converter');
 
   var SwaggerData, isOAS3;
   function handlePath(path) {
@@ -14,56 +15,56 @@ const compareVersions = require('compare-versions');
     return path;
   }
 
-  function openapi2swagger(data) {
-    data.swagger = '2.0';
-    _.each(data.paths, apis => {
-      _.each(apis, api => {
-        _.each(api.responses, res => {
-          if (
-            res.content &&
-            res.content['application/json'] &&
-            typeof res.content['application/json'] === 'object'
-          ) {
-            Object.assign(res, res.content['application/json']);
-            delete res.content;
-          }          
-          if (
-            res.content &&
-            res.content['application/hal+json'] &&
-            typeof res.content['application/hal+json'] === 'object'
-          ) {
-            Object.assign(res, res.content['application/hal+json']);
-            delete res.content;
-          }          
-          if (
-            res.content &&
-            res.content['*/*'] &&
-            typeof res.content['*/*'] === 'object'
-          ) {
-            Object.assign(res, res.content['*/*']);
-            delete res.content;
-          }
-        });
-        if (api.requestBody) {
-          if (!api.parameters) api.parameters = [];
-          let body = {
-            type: 'object',
-            name: 'body',
-            in: 'body'
-          };
-          try {
-            body.schema = api.requestBody.content['application/json'].schema;
-          } catch (e) {
-            body.schema = {};
-          }
-
-          api.parameters.push(body);
-        }
-      });
-    });
-
-    return data;
-  }
+  // function openapi2swagger(data) {
+  //   data.swagger = '2.0';
+  //   _.each(data.paths, apis => {
+  //     _.each(apis, api => {
+  //       _.each(api.responses, res => {
+  //         if (
+  //           res.content &&
+  //           res.content['application/json'] &&
+  //           typeof res.content['application/json'] === 'object'
+  //         ) {
+  //           Object.assign(res, res.content['application/json']);
+  //           delete res.content;
+  //         }
+  //         if (
+  //           res.content &&
+  //           res.content['application/hal+json'] &&
+  //           typeof res.content['application/hal+json'] === 'object'
+  //         ) {
+  //           Object.assign(res, res.content['application/hal+json']);
+  //           delete res.content;
+  //         }
+  //         if (
+  //           res.content &&
+  //           res.content['*/*'] &&
+  //           typeof res.content['*/*'] === 'object'
+  //         ) {
+  //           Object.assign(res, res.content['*/*']);
+  //           delete res.content;
+  //         }
+  //       });
+  //       if (api.requestBody) {
+  //         if (!api.parameters) api.parameters = [];
+  //         let body = {
+  //           type: 'object',
+  //           name: 'body',
+  //           in: 'body'
+  //         };
+  //         try {
+  //           body.schema = api.requestBody.content['application/json'].schema;
+  //         } catch (e) {
+  //           body.schema = {};
+  //         }
+  //
+  //         api.parameters.push(body);
+  //       }
+  //     });
+  //   });
+  //
+  //   return data;
+  // }
 
   async function handleSwaggerData(res) {
 
@@ -90,8 +91,17 @@ const compareVersions = require('compare-versions');
 
       isOAS3 = res.openapi && compareVersions(res.openapi,'3.0.0') >= 0;
       if (isOAS3) {
-        res = openapi2swagger(res);
+        // res = openapi2swagger(res);
+        let converted = await Converter.convert({
+            from: 'openapi_3',
+            to: 'swagger_2',
+            source: res,
+          })
+        res = JSON.parse(converted.stringify());
       }
+      // if (isOAS3) {
+      //   res = openapi2swagger(res);
+      // }
       res = await handleSwaggerData(res);
       SwaggerData = res;
 

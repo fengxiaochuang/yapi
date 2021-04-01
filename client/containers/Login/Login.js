@@ -87,7 +87,7 @@ class Login extends Component {
       this.state.loginType === 'ldap'
         ? {}
         : {
-            required: true,
+            required: false,
             message: '请输入正确的email!',
             pattern: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{1,})+$/
           };
@@ -104,7 +104,7 @@ class Login extends Component {
         )}
         {/* 用户名 (Email) */}
         <FormItem style={formItemStyle}>
-          {getFieldDecorator('email', { rules: [emailRule] })(
+          {getFieldDecorator('email', {initialValue : 'yapi@sinovoice.com.cn',rules: [emailRule] })(
             <Input
               style={changeHeight}
               prefix={<Icon type="user" style={{ fontSize: 13 }} />}
@@ -115,8 +115,8 @@ class Login extends Component {
 
         {/* 密码 */}
         <FormItem style={formItemStyle}>
-          {getFieldDecorator('password', {
-            rules: [{ required: true, message: '请输入密码!' }]
+          {getFieldDecorator('password', {initialValue : 'ymfe.org',
+            rules: [{ required: false, message: '请输入密码!' }]
           })(
             <Input
               style={changeHeight}

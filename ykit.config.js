@@ -34,7 +34,7 @@ function createScript(plugin, pathAlias) {
 }
 
 function initPlugins(configPlugin) {
-  configPlugin = require('../config.json').plugins;
+  configPlugin = require('./config.json').plugins;
   var systemConfigPlugin = require('./common/config.js').exts;
 
   var scripts = [];
@@ -79,7 +79,7 @@ module.exports = {
           defaultQuery.plugins.push(['import', { libraryName: 'antd' }]);
           return defaultQuery;
         },
-        exclude: isWin ? /(tui-editor|node_modules\\(?!_?(yapi-plugin|json-schema-editor-visual)))/ : /(tui-editor|node_modules\/(?!_?(yapi-plugin|json-schema-editor-visual)))/
+        exclude: isWin ? /(tui-editor|node_modules\\(?!_?(yapi-plugin|json-schema-editor-visual|api-spec-converter)))/ : /(tui-editor|node_modules\/(?!_?(yapi-plugin|json-schema-editor-visual|api-spec-converter)))/
       }
     }
   ],
@@ -179,8 +179,14 @@ module.exports = {
 
         baseConfig.module.preLoaders.push({
           test: /\.(js|jsx)$/,
-          exclude: /tui-editor|node_modules|google-diff.js/,
+          exclude: /tui-editor|node_modules|google-diff.js|api-spec-converter/,
           loader: 'eslint-loader'
+        });
+        // @doramart 只是添加了这里的一个配置
+        baseConfig.module.preLoaders.push({
+          test: /\.(js|jsx)$/,
+          include: [path.resolve(__dirname, './node_modules/swagger-client')],
+          loader: 'babel-loader'
         });
 
         baseConfig.module.preLoaders.push({
