@@ -21,6 +21,8 @@ class syncModel extends baseModel {
       sync_mode: String,
       //上次成功同步接口时间,
       last_sync_time: Number,
+      // 上次同步使用的url
+      last_sync_url: String,
       //上次同步的swagger 文档内容
       old_swagger_content: String,
       add_time: Number,

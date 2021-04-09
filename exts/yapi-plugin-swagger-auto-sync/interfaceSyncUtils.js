@@ -94,7 +94,9 @@ class syncUtils {
         let oldSyncJob = await this.syncModel.getByProjectId(projectId);
 
         //更新之前判断本次swagger json数据是否跟上次的相同,相同则不更新
-        if (newSwaggerJsonData && oldSyncJob.old_swagger_content && oldSyncJob.old_swagger_content == md5(newSwaggerJsonData)) {
+        if (newSwaggerJsonData && oldSyncJob.old_swagger_content && oldSyncJob.old_swagger_content == md5(newSwaggerJsonData)
+            && oldSyncJob.last_sync_url == swaggerUrl
+        ) {
             //记录日志
             // this.saveSyncLog(0, syncMode, "接口无更新", uid, projectId);
             oldSyncJob.last_sync_time = yapi.commons.time();
@@ -119,6 +121,7 @@ class syncUtils {
             //修改sync_model的属性
             oldSyncJob.last_sync_time = yapi.commons.time();
             oldSyncJob.old_swagger_content = md5(newSwaggerJsonData);
+            oldSyncJob.last_sync_url = swaggerUrl;
             await this.syncModel.upById(oldSyncJob._id, oldSyncJob);
         }
         //记录日志
@@ -138,11 +141,11 @@ class syncUtils {
 
     /**
      * 记录同步日志
-     * @param {*} errcode 
-     * @param {*} syncMode 
-     * @param {*} moremsg 
-     * @param {*} uid 
-     * @param {*} projectId 
+     * @param {*} errcode
+     * @param {*} syncMode
+     * @param {*} moremsg
+     * @param {*} uid
+     * @param {*} projectId
      */
     saveSyncLog(errcode, syncMode, moremsg, uid, projectId) {
         yapi.commons.saveLog({
@@ -207,12 +210,12 @@ class syncUtils {
         try {
             let response = await axios.get(swaggerUrl);
             if (response.status > 400) {
-                throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确')
+                throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确' + swaggerUrl)
             }
             return response.data;
         } catch (e) {
             let response = e.response || {status: e.message || 'error'};
-            throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确')
+            throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确' + swaggerUrl)
         }
     }
 
