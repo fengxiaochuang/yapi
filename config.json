@@ -4,7 +4,7 @@
    "closeRegister": true,
    "timeout": 120000,
    "db": {
-      "servername": "10.0.1.125",
+      "servername": "127.0.0.1",
       "DATABASE": "yapi",
       "port": 27017,
       "user": "",
@@ -12,13 +12,13 @@
       "authSource": ""
    },
    "mail": {
-      "enable": true,
+      "enable": false,
       "host": "10.0.0.251",
       "port": 25,
-      "from": "hcicloud_ops@sinovoice.com.cn",
+      "from": "",
       "auth": {
-         "user": "hcicloud_ops@sinovoice.com",
-         "pass": "hcicloud_ops"
+         "user": "",
+         "pass": ""
       },
       "secure": false,
       "tls": {
